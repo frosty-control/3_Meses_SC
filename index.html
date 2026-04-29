@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Frosty — SC 3 Meses</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -170,6 +170,7 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
 @media(max-width:580px){.g3{grid-template-columns:1fr}}
 
 /* ── REGIONAL TABLE ── */
+.drill-tbl-wrap-outer{overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch}
 .drill-tbl{width:100%;border-collapse:collapse;font-size:.71rem}
 .drill-tbl thead th{background:#F0F4FF;color:var(--muted);font-weight:700;
   font-size:.59rem;text-transform:uppercase;letter-spacing:.4px;
@@ -192,7 +193,7 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
 .pbar-fill{height:100%;border-radius:3px}
 
 /* ── RESUMO DIA ── */
-.rd-tbl{width:100%;border-collapse:collapse;font-size:.72rem}
+.rd-tbl{width:100%;border-collapse:collapse;font-size:.72rem;min-width:400px}
 .rd-tbl thead th{background:#F0F4FF;color:var(--muted);font-weight:700;font-size:.6rem;
   text-transform:uppercase;letter-spacing:.4px;padding:8px 12px;
   border-bottom:2px solid var(--border);text-align:center;white-space:nowrap}
@@ -334,106 +335,175 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
 
 /* ── MOBILE RESPONSIVE ── */
 @media(max-width:768px){
-  /* Geral */
-  html{font-size:12px}
+  /* ── BASE ── */
+  *{-webkit-tap-highlight-color:transparent}
+  html{font-size:13px;overflow-x:hidden}
   body{overflow-x:hidden}
 
-  /* Header */
-  .hdr{padding:0 10px;height:50px;gap:6px}
-  .hdr-logo{height:28px}
-  .hdr-title{font-size:.68rem}
-  .hdr-title small{font-size:.5rem}
+  /* ── HEADER ── */
+  .hdr{padding:0 14px;height:48px;gap:8px}
+  .hdr-logo{height:26px}
+  .hdr-title{font-size:.72rem;font-weight:800}
+  .hdr-title small{font-size:.56rem;opacity:.8}
   .hdr-time{display:none}
+  .pill-live{font-size:.54rem;padding:2px 7px}
   .pill-live span{display:none}
+  .btn-hdr{font-size:.64rem;padding:5px 10px;gap:4px}
 
-  /* Banners */
-  .bv,.ba{font-size:.62rem;padding:5px 12px}
+  /* ── BANNERS ── */
+  .bv,.ba{font-size:.64rem;padding:6px 14px;flex-wrap:wrap;gap:4px}
 
-  /* Imp bar */
-  .imp-bar{padding:7px 12px;gap:8px;flex-wrap:wrap}
-  .imp-info b{font-size:.68rem}
-  .imp-info small{font-size:.58rem}
-  .btn-g{font-size:.64rem;padding:6px 10px}
+  /* ── IMP BAR ── */
+  .imp-bar{padding:8px 14px;gap:8px}
+  .imp-info{flex:1;min-width:0}
+  .imp-info b{font-size:.7rem}
+  .imp-info small{font-size:.6rem}
+  .btn-g{font-size:.66rem;padding:7px 12px;border-radius:8px}
 
-  /* Cfg bar */
-  .cfg-bar{padding:5px 12px;gap:8px;flex-wrap:wrap}
-  .cfg-field{font-size:.62rem}
-  .cfg-inp{width:54px;font-size:.68rem}
+  /* ── CFG BAR ── */
+  .cfg-bar{padding:6px 14px;gap:10px;flex-wrap:wrap}
+  .cfg-field label{font-size:.58rem}
+  .cfg-inp{width:60px;font-size:.7rem;padding:4px 6px}
+  .btn-rec{font-size:.66rem;padding:6px 12px}
 
-  /* Filtros - empilha em 2 colunas */
-  .filter-bar{padding:6px 12px;gap:6px;display:grid;grid-template-columns:1fr 1fr}
-  .filter-bar .btn-cl{grid-column:1/-1;justify-self:start}
-  .fg{width:100%}
-  .fc{width:100%;font-size:.68rem;height:30px}
+  /* ── FILTROS ── */
+  .filter-bar{
+    padding:10px 14px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    background:#fff;
+    border-bottom:1px solid var(--border)
+  }
+  .fg{display:flex;flex-direction:column;gap:3px;width:100%}
+  .fg label{font-size:.58rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .fc{width:100%;font-size:.7rem;height:32px;border-radius:8px;padding:0 8px}
+  .filter-bar .fg:last-child{grid-column:1/-1}
+  .filter-bar input.fc{height:32px}
+  .btn-cl{grid-column:1/-1;justify-self:end;font-size:.66rem;padding:5px 12px}
 
-  /* Canvas */
-  .canvas{padding:10px 10px 90px}
+  /* ── CANVAS ── */
+  .canvas{padding:12px 12px 90px;gap:12px}
 
-  /* Cards - 2 colunas */
-  .cards-row{grid-template-columns:1fr 1fr!important;gap:8px}
-  .card{padding:12px 12px}
-  .card-val{font-size:1.5rem}
-  .card-lbl{font-size:.55rem}
-  .card-sub{font-size:.55rem}
-  .card-ico{width:24px;height:24px;font-size:.65rem;margin-bottom:6px}
+  /* ── CARDS ── */
+  .cards-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px
+  }
+  .card{padding:14px 14px;border-radius:12px}
+  .card-ico{width:26px;height:26px;font-size:.7rem;margin-bottom:8px}
+  .card-val{font-size:1.6rem;line-height:1}
+  .card-lbl{font-size:.58rem;margin-top:3px}
+  .card-sub{font-size:.56rem;margin-top:2px}
 
-  /* Indicador */
-  .ind-box{padding:14px 12px}
-  .ind-top{display:grid;grid-template-columns:auto 1fr auto;align-items:start;gap:8px;flex-wrap:unset}
-  .ind-emoji{font-size:2.2rem}
-  .ind-title{font-size:.7rem}
-  .ind-desc{font-size:.62rem}
-  .ind-pct-big{font-size:1.8rem}
-  .ind-pct-lbl{font-size:.54rem}
-  .ind-mini-cards{grid-template-columns:1fr 1fr!important;gap:6px}
-  .imc{padding:8px}
+  /* ── INDICADOR ── */
+  .ind-box{padding:16px 14px;border-radius:12px}
+  .ind-top{display:flex;flex-direction:row;align-items:flex-start;gap:10px;flex-wrap:nowrap}
+  .ind-emoji{font-size:2rem;flex-shrink:0}
+  .ind-txt{flex:1;min-width:0}
+  .ind-title{font-size:.75rem}
+  .ind-desc{font-size:.63rem;line-height:1.5}
+  .ind-pct-big{font-size:2rem;text-align:right;flex-shrink:0}
+  .ind-pct-lbl{font-size:.54rem;text-align:right}
+  .ind-bar-wrap{margin:12px 0 10px}
+  .ind-mini-cards{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px
+  }
+  .imc{padding:10px 10px;border-radius:10px}
   .imc-val{font-size:1.1rem}
-  .imc-lbl{font-size:.52rem}
+  .imc-lbl{font-size:.54rem}
 
-  /* Grids */
-  .g2,.g3{grid-template-columns:1fr!important}
+  /* ── GRIDS ── */
+  .g2,.g3{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px
+  }
 
-  /* Painéis */
-  .pnl{padding:12px 10px}
-  .pnl-ttl{font-size:.68rem}
-  .pnl-sub{font-size:.56rem}
-  .ch-wrap{height:150px!important}
-  .ch-wrap-lg{height:200px!important}
+  /* ── PAINÉIS ── */
+  .pnl{padding:14px 12px;border-radius:12px}
+  .pnl-ttl{font-size:.72rem}
+  .pnl-sub{font-size:.58rem}
+  .ch-wrap{height:180px!important}
+  .ch-wrap-lg{height:220px!important}
 
-  /* Tabelas - scroll horizontal */
-  .drill-tbl-wrap,.rd-tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
-  .drill-tbl{font-size:.6rem;min-width:420px}
-  .drill-tbl thead th{padding:5px 5px;font-size:.52rem;white-space:nowrap}
-  .drill-tbl tbody td{padding:5px 5px}
-  .drill-tbl tfoot td{padding:5px 5px;font-size:.6rem}
-  .rd-tbl{font-size:.6rem;min-width:400px}
-  .rd-tbl thead th{padding:6px 6px;font-size:.52rem;white-space:nowrap}
-  .rd-tbl tbody td{padding:6px 6px}
-  .rd-tbl tfoot td{padding:6px 6px}
+  /* ── TABELA ANÁLISE REGIONAL ── */
+  .drill-tbl-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    width:100%;
+    border-radius:0 0 10px 10px
+  }
+  .drill-tbl{
+    font-size:.62rem;
+    min-width:480px;
+    width:100%
+  }
+  .drill-tbl thead th{
+    padding:7px 8px;
+    font-size:.54rem;
+    white-space:nowrap
+  }
+  .drill-tbl tbody td{padding:6px 8px}
+  .drill-tbl tfoot td{padding:7px 8px;font-size:.62rem}
 
-  /* Tabela clientes */
-  .tbl-hd{padding:8px 10px;flex-wrap:wrap;gap:6px}
-  .tbl-sinp{font-size:.68rem}
-  .main-tbl{font-size:.6rem;min-width:600px}
-  .main-tbl thead th{padding:6px 6px;font-size:.52rem}
-  .main-tbl tbody td{padding:6px 6px}
-  .badge{font-size:.52rem;padding:2px 6px}
-  .trat-cell{max-width:120px}
+  /* ── TABELA RESUMO DIA ── */
+  .rd-tbl-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    width:100%
+  }
+  .rd-tbl{font-size:.62rem;min-width:360px}
+  .rd-tbl thead th{padding:7px 8px;font-size:.54rem;white-space:nowrap}
+  .rd-tbl tbody td{padding:7px 8px}
+  .rd-tbl tfoot td{padding:7px 8px}
 
-  /* Paginação */
-  .pagination{padding:8px 10px}
-  .pag-info{font-size:.6rem}
-  .pag-btn{padding:3px 8px;font-size:.6rem}
+  /* ── TABELA CLIENTES ── */
+  .tbl-hd{padding:10px 12px;flex-wrap:wrap;gap:6px}
+  .tbl-sinp{font-size:.7rem;height:30px}
+  .tbl-sc{font-size:.7rem;height:30px}
+  .main-tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .main-tbl{font-size:.6rem;min-width:580px}
+  .main-tbl thead th{padding:7px 7px;font-size:.54rem;white-space:nowrap}
+  .main-tbl tbody td{padding:7px 7px}
+  .badge{font-size:.52rem;padding:2px 6px;border-radius:5px}
+  .trat-cell{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-  /* Nav mobile */
+  /* ── PAGINAÇÃO ── */
+  .pagination{padding:8px 12px;gap:4px}
+  .pag-info{font-size:.62rem}
+  .pag-btn{padding:4px 8px;font-size:.62rem;border-radius:6px}
+
+  /* ── NAV MOBILE ── */
   .mob-nav{display:flex!important;padding-bottom:env(safe-area-inset-bottom,8px)}
+  .mob-tab span{font-size:.54rem}
 
-  /* Modal login */
-  .ov{padding:16px}
-  .modal{padding:28px 20px;border-radius:20px;margin:0}
-  .modal h2{font-size:.95rem}
-  .modal p{font-size:.62rem}
-  .modal-inp{padding:10px 12px;font-size:.78rem}
+  /* ── MODAL LOGIN ── */
+  .ov{padding:20px}
+  .modal{
+    padding:30px 24px;
+    border-radius:20px;
+    margin:0;
+    width:100%;
+    max-width:360px
+  }
+  .modal-logo img{height:44px}
+  .modal h2{font-size:1rem}
+  .modal p{font-size:.64rem}
+  .modal-inp{padding:11px 13px;font-size:.8rem;border-radius:10px}
+  .modal-label{font-size:.6rem}
+  .btn-p{border-radius:10px;padding:12px;font-size:.8rem!important}
+}
+
+@media(max-width:400px){
+  .cards-row{grid-template-columns:1fr 1fr}
+  .card-val{font-size:1.4rem}
+  .ind-pct-big{font-size:1.7rem}
+  .filter-bar{grid-template-columns:1fr}
+  .filter-bar .fg:last-child{grid-column:1}
 }
 </style>
 </head>
@@ -659,15 +729,15 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
 
   <!-- 5. ANÁLISE REGIONAL + RESUMO DIA -->
   <div class="sec active" id="sec-regional">
-    <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:16px">
       <!-- Drill-down regional -->
-      <div class="pnl">
+      <div class="pnl" style="width:100%">
         <div class="pnl-hd"><div>
           <div class="pnl-ttl"><i class="fa-solid fa-sitemap" style="color:var(--blue);margin-right:5px"></i>Análise Regional</div>
           <div class="pnl-sub">Clique na regional para ver vendedores · clique no vendedor para ver clientes</div>
         </div></div>
-        <div style="border:1.5px solid var(--border);border-bottom:none;border-radius:var(--r-sm) var(--r-sm) 0 0">
-          <table class="drill-tbl" id="drill-tbl" style="border:none">
+        <div style="border:1.5px solid var(--border);border-bottom:none;border-radius:var(--r-sm) var(--r-sm) 0 0;overflow-x:auto;-webkit-overflow-scrolling:touch">
+          <table class="drill-tbl" id="drill-tbl" style="border:none;min-width:500px">
             <thead><tr>
               <th style="text-align:left;min-width:130px">Regional / Vendedor / Cliente</th>
               <th>S/C (3M)</th>
