@@ -160,8 +160,9 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
   display:flex;align-items:center;justify-content:center;font-size:.7rem;
   transition:all .15s}
 .btn-expand:hover{background:var(--blue);border-color:var(--blue);color:#fff}
-.ch-wrap{height:210px;display:flex;align-items:center;justify-content:center}
-.ch-wrap-lg{height:380px;display:flex;align-items:center;justify-content:center}
+.ch-wrap{height:210px;width:100%;position:relative}
+canvas{display:block;width:100%!important}
+.ch-wrap-lg{height:380px;width:100%;position:relative}
 
 /* ── GRIDS ── */
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
@@ -335,6 +336,7 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
 
 /* ── MOBILE RESPONSIVE ── */
 @media(max-width:768px){
+  canvas{display:block!important;width:100%!important}
   /* ── BASE ── */
   *{-webkit-tap-highlight-color:transparent}
   html{font-size:13px;overflow-x:hidden}
@@ -427,8 +429,8 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
   .pnl{padding:14px 12px;border-radius:12px}
   .pnl-ttl{font-size:.72rem}
   .pnl-sub{font-size:.58rem}
-  .ch-wrap{height:180px!important}
-  .ch-wrap-lg{height:220px!important}
+  .ch-wrap{height:200px!important;width:100%!important}
+  .ch-wrap-lg{height:260px!important;width:100%!important}
 
   /* ── TABELA ANÁLISE REGIONAL ── */
   .drill-tbl-wrap{
@@ -438,28 +440,31 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
     border-radius:0 0 10px 10px
   }
   .drill-tbl{
-    font-size:.62rem;
-    min-width:480px;
+    font-size:.63rem;
+    min-width:560px;
     width:100%
   }
   .drill-tbl thead th{
-    padding:7px 8px;
-    font-size:.54rem;
+    padding:8px 8px;
+    font-size:.55rem;
     white-space:nowrap
   }
-  .drill-tbl tbody td{padding:6px 8px}
-  .drill-tbl tfoot td{padding:7px 8px;font-size:.62rem}
+  .drill-tbl tbody td{padding:7px 8px}
+  .drill-tbl tfoot td{padding:8px 8px;font-size:.63rem}
 
   /* ── TABELA RESUMO DIA ── */
   .rd-tbl-wrap{
     overflow-x:auto;
     -webkit-overflow-scrolling:touch;
-    width:100%
+    width:100%;
+    border-radius:8px
   }
-  .rd-tbl{font-size:.62rem;min-width:360px}
-  .rd-tbl thead th{padding:7px 8px;font-size:.54rem;white-space:nowrap}
-  .rd-tbl tbody td{padding:7px 8px}
-  .rd-tbl tfoot td{padding:7px 8px}
+  .rd-tbl{font-size:.64rem;min-width:420px;width:100%}
+  .rd-tbl thead th{padding:8px 10px;font-size:.56rem;white-space:nowrap}
+  .rd-tbl thead th:first-child{min-width:110px;text-align:left}
+  .rd-tbl tbody td{padding:8px 10px}
+  .rd-tbl tbody td:first-child{min-width:110px;white-space:nowrap}
+  .rd-tbl tfoot td{padding:8px 10px}
 
   /* ── TABELA CLIENTES ── */
   .tbl-hd{padding:10px 12px;flex-wrap:wrap;gap:6px}
@@ -1268,7 +1273,7 @@ function renderCharts(){
       {label:"2 Meses",data:cd.sups.map(function(s){return cd.sMap[s]["2 - Meses"]||0;}),backgroundColor:"rgba(255,107,0,.85)",borderColor:"#FF6B00",borderWidth:1,borderRadius:4,stack:"s"},
       {label:"3 Meses",data:cd.sups.map(function(s){return cd.sMap[s]["3 - Meses"]||0;}),backgroundColor:"rgba(211,5,0,.85)",borderColor:"#D30500",borderWidth:1,borderRadius:4,stack:"s"}
     ]},
-    options:{scales:{x:{ticks:{color:"#5A6A9A",font:{family:"Montserrat",size:9,weight:"600"}},grid:{display:false},border:{display:false},stacked:true},y:{display:false,stacked:true,beginAtZero:true}},plugins:{legend:{position:"top",labels:{color:"#5A6A9A",font:{family:"Montserrat",size:10,weight:"600"},padding:10,boxWidth:10,boxHeight:10}},tooltip:TIP}}});
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:"#5A6A9A",font:{family:"Montserrat",size:9,weight:"600"},maxRotation:45,minRotation:30},grid:{display:false},border:{display:false},stacked:true},y:{display:false,stacked:true,beginAtZero:true}},plugins:{legend:{position:"top",labels:{color:"#5A6A9A",font:{family:"Montserrat",size:10,weight:"600"},padding:10,boxWidth:10,boxHeight:10}},tooltip:TIP}}});
 }
 
 /* ── FULLSCREEN ── */
@@ -1288,7 +1293,7 @@ function openFS(ttl,key){
   canvas.style.maxWidth="100%";
   fsCh.appendChild(canvas);
   if(fsChart){try{fsChart.destroy();}catch(e){}fsChart=null;}
-  var dOpts={cutout:"54%",maintainAspectRatio:true,aspectRatio:1.2,plugins:{legend:legOpt,tooltip:TIP}};
+  var dOpts={cutout:"54%",responsive:true,maintainAspectRatio:false,plugins:{legend:legOpt,tooltip:TIP}};
   if(key==="status")fsChart=new Chart(canvas,{type:"doughnut",data:{labels:["2 Meses","3 Meses"],datasets:[{data:[cd.m2,cd.m3],backgroundColor:["#FF6B00","#D30500"],borderColor:"#fff",borderWidth:3,hoverOffset:10}]},options:dOpts});
   else if(key==="resp")fsChart=new Chart(canvas,{type:"doughnut",data:{labels:cd.rK,datasets:[{data:cd.rK.map(function(k){return cd.rMap[k];}),backgroundColor:["#0034DB","#FF6B00","#D30500","#46C42C","#8B00FF"],borderColor:"#fff",borderWidth:3,hoverOffset:10}]},options:dOpts});
   else if(key==="trat")fsChart=new Chart(canvas,{type:"doughnut",data:{labels:["Sem tratativa","Pendente","Concluído"],datasets:[{data:[cd.semT,cd.pend,cd.conc],backgroundColor:["#5A6A9A","#FF6B00","#46C42C"],borderColor:"#fff",borderWidth:3,hoverOffset:10}]},options:dOpts});
