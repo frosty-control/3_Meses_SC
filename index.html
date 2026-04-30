@@ -45,7 +45,7 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
 .banner{padding:7px 20px;display:flex;align-items:center;gap:10px;
   font-size:.7rem;font-weight:600;border-bottom:2px solid transparent;
   position:sticky;top:60px;z-index:350}
-.bv{background:#EFF6FF;border-color:#93C5FD;color:#1E40AF}
+
 .ba{background:#F0FFF4;border-color:var(--green);color:#166534}
 
 /* ── IMPORT BAR ── */
@@ -376,7 +376,7 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
   .btn-hdr{font-size:.64rem;padding:5px 10px}
 
   /* ── Barras ── */
-  .bv,.ba{font-size:.64rem;padding:6px 14px}
+  .ba{font-size:.64rem;padding:6px 14px}
   .imp-bar{padding:8px 14px;gap:8px;flex-wrap:wrap}
   .imp-info b{font-size:.7rem}
   .imp-info small{font-size:.6rem}
@@ -560,10 +560,6 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
   </div>
 </header>
 
-<div class="banner bv" id="bv" style="display:none">
-  <i class="fa-solid fa-eye"></i>
-  <span>Bem-vindo(a)! <strong>Modo visualização</strong> — somente leitura. Para atualizar, contate <strong>AndressIA</strong>.</span>
-</div>
 <div class="banner ba" id="ba" style="display:none">
   <i class="fa-solid fa-user-shield"></i>
   <strong>Bem-vinda, AndressIA! 👋</strong>
@@ -1565,7 +1561,7 @@ function initViewer(data, timestamp){
   allData=data; filtered=[...allData];
   isViewer=true;
   document.getElementById("btn-admin").style.display="flex"; // mantém botão admin visível
-  document.getElementById("bv").style.display="flex";
+  
   document.getElementById("ba").style.display="none";
   document.getElementById("imp-bar").style.display="none";
   var cfgBar=document.querySelector(".cfg-bar");
