@@ -1114,7 +1114,17 @@ function exportHTML(){
   try{
     var now = new Date();
     var ts = now.toLocaleDateString("pt-BR") + " às " + now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-    var output = {atualizado_em: ts, total: allData.length, dados: allData};
+    var cfg=getCfg();
+    var output = {
+      atualizado_em: ts,
+      total: allData.length,
+      dados: allData,
+      dcDados: dcData,
+      tratDados: tratData,
+      analDados: analData,
+      rdDados: RD,
+      cfg: {total:cfg.total, ini3m:cfg.ini3m, ini2m:cfg.ini2m}
+    };
     var blob=new Blob([JSON.stringify(output,null,2)],{type:"application/json;charset=utf-8"});
     var url=URL.createObjectURL(blob);
     var a=document.createElement("a");a.href=url;
@@ -1834,8 +1844,20 @@ function setUltimaAtualizacao(timestamp){
   el.textContent = timestamp || "—";
 }
 
-function initViewer(data, timestamp){
+function initViewer(data, timestamp, extra){
   allData=data; filtered=[...allData];
+  // Restaurar dcData, tratData, analData, RD e cfg do JSON
+  if(extra){
+    if(extra.dcDados&&extra.dcDados.length>0) dcData=extra.dcDados;
+    if(extra.tratDados&&extra.tratDados.length>0) tratData=extra.tratDados;
+    if(extra.analDados&&extra.analDados.length>0) analData=extra.analDados;
+    if(extra.rdDados&&Object.keys(extra.rdDados).length>0) RD=extra.rdDados;
+    if(extra.cfg){
+      if(extra.cfg.total) document.getElementById("cfg-total").value=extra.cfg.total;
+      if(extra.cfg.ini3m) document.getElementById("cfg-ini3m").value=extra.cfg.ini3m;
+      if(extra.cfg.ini2m) document.getElementById("cfg-ini2m").value=extra.cfg.ini2m;
+    }
+  }
   isViewer=true;
   document.getElementById("btn-admin").style.display="flex"; // mantém botão admin visível
   
@@ -1858,7 +1880,7 @@ if(typeof window.__SC_VIEWER__!=="undefined"){
     .then(function(json){
       var data = json.dados || json; // suporta formato novo e antigo
       var timestamp = json.atualizado_em || null;
-      initViewer(data, timestamp);
+      initViewer(data, timestamp, json);
     })
     .catch(function(e){
       console.error(e);
