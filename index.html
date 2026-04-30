@@ -1564,8 +1564,7 @@ function initViewer(data, timestamp){
   
   document.getElementById("ba").style.display="none";
   document.getElementById("imp-bar").style.display="none";
-  var cfgBar=document.querySelector(".cfg-bar");
-  if(cfgBar)cfgBar.style.display="none";
+  // cfg-bar visible for all users
   populateFilters(); renderAll();
   setUltimaAtualizacao(timestamp);
   showToast("✓ "+allData.length+" clientes carregados");
