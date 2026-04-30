@@ -42,16 +42,14 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
 .btn-hdr:hover{background:rgba(255,255,255,.22)}
 
 /* ── BANNERS ── */
-.banner{padding:7px 20px;display:flex;align-items:center;gap:10px;
-  font-size:.7rem;font-weight:600;border-bottom:2px solid transparent;
-  position:sticky;top:60px;z-index:350}
+{padding:7px 20px;display:flex;align-items:center;gap:10px;
+  font-size:.7rem;font-weight:600;border-bottom:2px solid transparent;}
 
 .ba{background:#F0FFF4;border-color:var(--green);color:#166534}
 
 /* ── IMPORT BAR ── */
 .imp-bar{background:#fff;border-bottom:1px solid var(--border);
-  padding:9px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-  position:sticky;top:60px;z-index:350}
+  padding:9px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .imp-ico{color:var(--green);font-size:1rem;flex-shrink:0}
 .imp-info{flex:1}
 .imp-info b{display:block;font-size:.74rem;font-weight:700}
@@ -66,8 +64,7 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
 
 /* ── CFG BAR ── */
 .cfg-bar{background:rgba(255,255,255,0.93);border-bottom:1px solid rgba(255,255,255,0.2);
-  padding:7px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  position:sticky;top:60px;z-index:350}
+  padding:7px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
 .cfg-field{display:flex;align-items:center;gap:6px;font-size:.68rem;font-weight:600;color:var(--muted)}
 .cfg-inp{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:3px 7px;
   font-family:"Montserrat",sans-serif;font-size:.74rem;font-weight:700;width:72px;
@@ -78,9 +75,10 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
   font-weight:700;cursor:pointer}
 
 /* ── FILTERS BAR ── */
+{background:#fff;border-bottom:2px solid var(--border);
+  padding:8px 20px;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;}
 .filter-bar{background:#fff;border-bottom:2px solid var(--border);
-  padding:8px 20px;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;
-  position:sticky;top:60px;z-index:300}
+  padding:8px 20px;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
 .fg{display:flex;flex-direction:column;gap:3px}
 .fg label{font-size:.58rem;font-weight:700;color:var(--muted);
   text-transform:uppercase;letter-spacing:.5px}
@@ -342,10 +340,10 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
 @media(max-width:700px){
   .mob-nav{display:block}
   .canvas{padding:16px 20px 76px;gap:24px}
-  .filter-bar{padding:7px 12px}
+  {padding:7px 12px}
   .hdr{padding:0 12px;height:52px}
   .hdr-title small,.hdr-time{display:none}
-  .imp-bar,.cfg-bar,.banner{padding:6px 12px}
+  .imp-bar,.cfg-bar,{padding:6px 12px}
   .d-only{display:none!important}
   .sec{display:none}
   .sec.active{display:block}
@@ -384,7 +382,7 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
   .cfg-bar{padding:6px 14px;gap:8px;flex-wrap:wrap}
 
   /* ── Filtros ── */
-  .filter-bar{
+  {
     padding:10px 14px;
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -506,7 +504,9 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
   .card-val{font-size:1.35rem}
   .ind-pct-big{font-size:1.6rem}
   .hdr-title small{display:none}
-}
+}.banner{padding:7px 20px;display:flex;align-items:center;gap:10px;
+  font-size:.7rem;font-weight:600;border-bottom:2px solid transparent}
+
 </style>
 </head>
 <body>
@@ -591,6 +591,8 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
     <input class="cfg-inp" id="cfg-meta" type="number" value="1" step="0.1"></div>
   <div class="cfg-field"><label>📅 3M início mês</label>
     <input class="cfg-inp" id="cfg-ini3m" type="number" value="360"></div>
+  <div class="cfg-field"><label>📅 2M início mês</label>
+    <input class="cfg-inp" id="cfg-ini2m" type="number" value="207"></div>
   <div class="cfg-field"><label>✅ Dias úteis</label>
     <input class="cfg-inp" id="cfg-du" type="number" value="20"></div>
   <div class="cfg-field"><label>📌 Dias trabalhados</label>
@@ -747,11 +749,9 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
               <th>% problema</th>
             </tr></thead>
             <tbody id="drill-body"></tbody>
+            <tfoot><tr id="drill-foot" style="background:var(--bg);font-weight:800;border-top:2px solid var(--border)"></tr></tfoot>
           </table>
-        </div>
-        <table class="drill-tbl" style="border:1.5px solid var(--border);border-top:none;border-radius:0 0 var(--r-sm) var(--r-sm)">
-          <tfoot><tr id="drill-foot"></tr></tfoot>
-        </table></div>
+        </div></div>
       </div>
       <!-- Resumo Dia -->
       <div class="pnl">
@@ -858,7 +858,7 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
 <script>
 const AU="andressa.silva",AP="Frosty#2026";
 let isAdmin=false,isViewer=false;
-let allData=[],filtered=[];
+let allData=[],filtered=[],tratData=[],analData=[],dcData=[];
 let sortCol=null,sortDir=1,page=1,pageSize=10;
 let charts={},fsChart=null;
 let tblSearchCod="",tblSearchNome="";
@@ -872,7 +872,7 @@ const FOTO={
   "Marujinho":{total:385},"Telemarketing":{total:218}
 };
 
-const RD={
+var RD={
   "F_Juazeiro":{m:22,t:17},"F_Maranhão":{m:6,t:6},"F_Mossoró":{m:18,t:18},
   "F_Sobral":{m:77,t:76},"F_Teresina":{m:40,t:39},"M_Capital":{m:113,t:109},
   "M_Interior":{m:14,t:14},"M_Nacionais":{m:24,t:23},"M_Regionais":{m:2,t:2},
@@ -937,24 +937,174 @@ document.getElementById("file-in").addEventListener("change",function(e){
   reader.onload=function(ev){
     try{
       var wb=XLSX.read(ev.target.result,{type:"binary",cellDates:true,dateNF:"dd/mm/yyyy"});
-      var sn="2 e 3 Meses_SC";
-      if(!wb.SheetNames.includes(sn)){showToast("⚠ Aba '2 e 3 Meses_SC' não encontrada.");return;}
-      var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:false,dateNF:"dd/mm/yyyy"});
-      var parsed=parseRows(rows);
-      if(!parsed.length){showToast("⚠ Nenhum dado.");return;}
-      allData=parsed;filtered=[...allData];drillOpen={};
+
+      // ── 1. Fotografia → total equip ativos + 3M início mês ──
+      var snFoto=wb.SheetNames.find(function(n){return n.toLowerCase().indexOf("fotografia")>=0;});
+      if(snFoto){
+        var rowsFoto=XLSX.utils.sheet_to_json(wb.Sheets[snFoto],{raw:true});
+        var totalRow=rowsFoto.find(function(r){
+          return (r["Equipe"]||r["equipe"]||"").toString().toLowerCase().indexOf("total")>=0;
+        });
+        if(totalRow){
+          var ta=parseInt(totalRow["Total Geral"]||totalRow["total geral"])||0;
+          var ti=parseInt(totalRow["3 - Meses"]||totalRow["3 - meses"])||0;
+          var ti2m=parseInt(totalRow["2 - Meses"]||totalRow["2 - meses"])||0;
+          if(ta>0) document.getElementById("cfg-total").value=ta;
+          if(ti>0) document.getElementById("cfg-ini3m").value=ti;
+          if(ti2m>0) document.getElementById("cfg-ini2m").value=ti2m;
+        }
+      }
+
+      // ── 2. Resumo Dia → col 0=Supervisor, 1=Manhã, 2=Tarde ──
+      var snRD=wb.SheetNames.find(function(n){
+        var nl=n.toLowerCase();
+        return nl.indexOf("resumo")>=0&&nl.indexOf("dia")>=0;
+      });
+      if(snRD){
+        var rdRaw=XLSX.utils.sheet_to_json(wb.Sheets[snRD],{header:1,raw:true});
+        var newRD={};
+        var dataRef="";
+        if(rdRaw[0]&&rdRaw[0][1]){
+          var dv=rdRaw[0][1];
+          if(dv instanceof Date){
+            dataRef=dv.toLocaleDateString("pt-BR");
+          } else if(typeof dv==="number"){
+            var dd=new Date(Math.round((dv-25569)*86400*1000));
+            dataRef=dd.toLocaleDateString("pt-BR");
+          } else { dataRef=dv.toString(); }
+        }
+        for(var ri=2;ri<rdRaw.length;ri++){
+          var row=rdRaw[ri];
+          var sup=(row[0]||"").toString().trim();
+          if(!sup||sup.toLowerCase().indexOf("total")>=0) continue;
+          var m=parseFloat(row[1])||0;
+          var t=parseFloat(row[2])||0;
+          if(sup) newRD[sup]={m:m,t:t};
+        }
+        if(Object.keys(newRD).length>0){
+          RD=newRD;
+          // Atualizar data no subtítulo
+          var rdSubs=document.querySelectorAll(".pnl-sub");
+          rdSubs.forEach(function(el){
+            if(el.textContent.indexOf("manhã vs tarde")>=0&&dataRef)
+              el.textContent="Comparativo manhã vs tarde · "+dataRef;
+          });
+        }
+      }
+
+      // ── 3. 2 e 3 Meses_SC → mapa de tratativas ──
+      var snTrat="2 e 3 Meses_SC";
+      if(!wb.SheetNames.includes(snTrat)){showToast("⚠ Aba '2 e 3 Meses_SC' não encontrada.");return;}
+      var rowsTrat=XLSX.utils.sheet_to_json(wb.Sheets[snTrat],{header:1,raw:false,dateNF:"dd/mm/yyyy"});
+      var tratativas=parseRows(rowsTrat);
+      var tratMap={};
+      tratativas.forEach(function(r){
+        var cod=(r["Cod_Cliente"]||"").toString().trim().toUpperCase();
+        if(cod) tratMap[cod]=r;
+      });
+
+      // ── 4. dCliente → base atual (Total Equip > 0, 2M ou 3M) ──
+      var snDcl="dCliente";
+      var parsed=[];
+      if(wb.SheetNames.includes(snDcl)){
+        var rowsDcl=XLSX.utils.sheet_to_json(wb.Sheets[snDcl],{raw:false,dateNF:"dd/mm/yyyy"});
+        rowsDcl.forEach(function(dc){
+          var cod=(dc["cod_cliente"]||"").toString().trim().toUpperCase();
+          var equip=parseFloat(dc["Total Equipamento"])||0;
+          var meses=parseInt(dc["Meses S/ Compra"])||0;
+          // Só inclui quem tem freezer E está em 2M ou 3M
+          if(!cod||equip<=0||(meses!==2&&meses!==3)) return;
+          var statusEquip=meses===3?"3 - Meses":"2 - Meses";
+          var trat=tratMap[cod]||{};
+          function fmtDate(v){
+            if(!v||v==="NaN"||v===null) return null;
+            return v.toString().trim()||null;
+          }
+          parsed.push({
+            "Supervisor":        (dc["supervisor"]||trat["Supervisor"]||"").toString(),
+            "Vendedor":          (dc["vendedor"]||trat["Vendedor"]||"").toString(),
+            "Cod_Cliente":       cod,
+            "Nome_Fantasia":     (dc["nome_fantasia"]||trat["Nome_Fantasia"]||"").toString(),
+            "Data_Cadastro":     fmtDate(dc["data_cadastro"])||trat["Data_Cadastro"]||null,
+            "Data_Ultima_Compra":trat["Data_Ultima_Compra"]||null,
+            "Status Equipamento":statusEquip,
+            "Horizontal":        parseFloat(dc["Horizontal"]||trat["Horizontal"])||0,
+            "Vertical":          parseFloat(dc["Vertical"]||trat["Vertical"])||0,
+            "Total Equipamento": equip,
+            "Chamado":           trat["Chamado"]||null,
+            "Data_Abertura":     fmtDate(trat["Data_Abertura"])||null,
+            "Data_Encerramento": fmtDate(trat["Data_Encerramento"])||null,
+            "Status":            trat["Status"]||null,
+            "Tratativa":         trat["Tratativa"]||"SEM TRATATIVA",
+            "Prazo":             fmtDate(trat["Prazo"])||null,
+            "Responsável Direto":trat["Responsável Direto"]||null,
+            "Status2":           trat["Status2"]||"PENDENTE"
+          });
+        });
+      }
+
+      // Fallback: se dCliente não existir, usa só tratativas
+      if(!parsed.length) parsed=tratativas;
+      if(!parsed.length){showToast("⚠ Nenhum dado encontrado.");return;}
+
+      // tratData = aba 2 e 3 Meses_SC (gráficos + tabela detalhada)
+      tratData=tratativas;
+      // allData = tratativas (tabela usa colunas exatas da aba 2 e 3 Meses_SC)
+      // parsed mantido para cálculos de equipamentos (cruzamento dCliente)
+      dcData=parsed; // cruzamento dCliente para cards/indicadores
+
+      // ── 5. Analitico → Análise Regional ──
+      var snAnal=wb.SheetNames.find(function(n){return n.toLowerCase().indexOf("analitico")>=0||n.toLowerCase().indexOf("analítico")>=0;});
+      if(snAnal){
+        var rowsAnal=XLSX.utils.sheet_to_json(wb.Sheets[snAnal],{header:1,raw:true});
+        var newAnal=[];
+        // Row 0 = headers: Supervisor, Total Freezer, Total freezer S/C, %equipe, %problema
+        var headers=rowsAnal[0]||[];
+        for(var ai=1;ai<rowsAnal.length;ai++){
+          var ar=rowsAnal[ai];
+          var sup=(ar[0]||"").toString().trim();
+          if(!sup||sup.toLowerCase().indexOf("total")>=0||sup.toLowerCase().indexOf("indicador")>=0||sup.toLowerCase().indexOf("meta")>=0) continue;
+          var totalFreez=parseFloat(ar[1])||0;
+          var totalSC=parseFloat(ar[2])||0;
+          var pctEquipe=parseFloat(ar[3])||0;
+          var pctProb=parseFloat(ar[4])||0;
+          if(sup&&(totalFreez>0||totalSC>0)) newAnal.push({
+            sup:sup, total:totalFreez, sc:totalSC,
+            pctEquipe:pctEquipe, pctProb:pctProb
+          });
+        }
+        if(newAnal.length>0) analData=newAnal;
+      }
+
+      // Table uses tratativas (exact columns from 2 e 3 Meses_SC)
+      allData=tratativas; filtered=[...allData]; drillOpen={};
       populateFilters();page=1;sortCol=null;sortDir=1;tblSearchCod="";tblSearchNome="";
       renderAll();document.getElementById("btn-exp").style.display="flex";
-      showToast("✓ "+allData.length+" clientes importados!");
-    }catch(err){showToast("⚠ Erro: "+err.message);}
+
+      var m3=parsed.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
+                   .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
+      var m2=parsed.filter(function(r){return r["Status Equipamento"]==="2 - Meses";})
+                   .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
+      var ini3m=parseInt(document.getElementById("cfg-ini3m").value)||0;
+      showToast("✓ "+parsed.length+" clientes | 3M: "+Math.round(m3)+" equip | Já Reduziu: "+(ini3m-Math.round(m3)));
+    }catch(err){showToast("⚠ Erro: "+err.message);console.error(err);}
   };
   reader.readAsBinaryString(f);this.value="";
 });
 function parseRows(rows){
   if(!rows||rows.length<2)return[];
   var h=rows[0];
+  // Colunas exatas da aba 2 e 3 Meses_SC
+  var COLS=["Supervisor","Vendedor","Cod_Cliente","Nome_Fantasia","Data_Cadastro",
+    "Status Equipamento","Horizontal","Vertical","Total Equipamento",
+    "Chamado","Data_Abertura","Data_Encerramento","Status",
+    "Tratativa","Prazo","Responsável Direto","Status2"];
   return rows.slice(1).filter(function(r){return r[0]||r[3];}).map(function(r){
-    var o={};h.forEach(function(k,i){o[k]=r[i]!==undefined?r[i]:null;});return o;
+    var o={};
+    h.forEach(function(k,i){
+      if(COLS.indexOf(k)>=0) o[k]=r[i]!==undefined?r[i]:null;
+    });
+    return o;
   });
 }
 
@@ -988,7 +1138,7 @@ function fd(v){var d=pd(v);return d?d.toLocaleDateString("pt-BR"):(v?String(v):"
 function isVenc(v){var d=pd(v);return d&&d<hoje;}
 function isCamAb(r){return r["Chamado"]&&!r["Data_Encerramento"];}
 var norm=function(s){return(s||"").toLowerCase().replace(/\s+/g," ").trim();};
-function getCfg(){return{total:parseInt(document.getElementById("cfg-total").value)||3889,meta:parseFloat(document.getElementById("cfg-meta").value)||1,ini3m:parseInt(document.getElementById("cfg-ini3m").value)||360,du:parseInt(document.getElementById("cfg-du").value)||20,dt:parseInt(document.getElementById("cfg-dt").value)||12};}
+function getCfg(){return{total:parseInt(document.getElementById("cfg-total").value)||3889,meta:parseFloat(document.getElementById("cfg-meta").value)||1,ini3m:parseInt(document.getElementById("cfg-ini3m").value)||360,ini2m:parseInt(document.getElementById("cfg-ini2m").value)||207,du:parseInt(document.getElementById("cfg-du").value)||20,dt:parseInt(document.getElementById("cfg-dt").value)||12};}
 
 /* ── FILTERS ── */
 function populateFilters(){
@@ -1117,15 +1267,41 @@ function doSort(col,toggle){
 function renderCards(){
   var d=filtered;
   var cfg=getCfg();
-  var m2=d.filter(function(r){return r["Status Equipamento"]==="2 - Meses";}).length;
-  var m3=d.filter(function(r){return r["Status Equipamento"]==="3 - Meses";}).length;
+  // Equipamentos: usar dcData (cruzamento dCliente) para contar equip correto
+  // Aplicar filtro de supervisor/status ao dcData também
+  var supF=document.getElementById("f-sup")?document.getElementById("f-sup").value:"";
+  var stF=document.getElementById("f-st")?document.getElementById("f-st").value:"";
+  var dc=(dcData&&dcData.length>0)?dcData.filter(function(r){
+    if(supF&&r["Supervisor"]!==supF)return false;
+    if(stF&&r["Status Equipamento"]!==stF)return false;
+    return true;
+  }):d;
+  var m2=dc.filter(function(r){return r["Status Equipamento"]==="2 - Meses";})
+           .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
+  var m3=dc.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
+           .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
   var totalSC=m2+m3;
   var metaQtd=Math.ceil(cfg.total*(cfg.meta/100));
-  var reduzido=cfg.ini3m-d.filter(function(r){return r["Status Equipamento"]==="3 - Meses";}).length;
+  // Já Reduziu = início (Fotografia) - atual (dCliente)
+  var red3m=Math.max(0,cfg.ini3m-m3);  // 360 - 277 = 83
+  var red2m=Math.max(0,cfg.ini2m-m2);  // 207 - 119 = 88
   var pctReal=cfg.total?(totalSC/cfg.total*100):0;
+  var stFilter=document.getElementById("f-st")?document.getElementById("f-st").value:"";
+  var redVal,redSub,redLbl;
+  if(stFilter==="2 - Meses"){
+    redVal=Math.round(red2m); redLbl="Já Reduziu (2M)";
+    redSub="início: "+cfg.ini2m+" → atual: "+Math.round(m2);
+  } else if(stFilter==="3 - Meses"){
+    redVal=Math.round(red3m); redLbl="Já Reduziu (3M)";
+    redSub="início: "+cfg.ini3m+" → atual: "+Math.round(m3);
+  } else {
+    // Todos: mostra 3M (principal)
+    redVal=Math.round(red3m); redLbl="Já Reduziu (3M)";
+    redSub="início: "+cfg.ini3m+" → atual: "+Math.round(m3);
+  }
   var defs=[
-    {lbl:"Total Freezers S/C",val:totalSC,sub:m2+"  (2M) · "+m3+" (3M)",ico:"fa-box-open",c:"#D30500",bg:"rgba(211,5,0,.08)"},
-    {lbl:"Já Reduziu (3M)",val:Math.max(0,reduzido),sub:"início: "+cfg.ini3m+" → atual: "+m3,ico:"fa-arrow-trend-down",c:"#46C42C",bg:"rgba(70,196,44,.1)"},
+    {lbl:"Total Freezers S/C",val:Math.round(totalSC),sub:Math.round(m2)+" equip 2M · "+Math.round(m3)+" equip 3M",ico:"fa-box-open",c:"#D30500",bg:"rgba(211,5,0,.08)"},
+    {lbl:redLbl,val:redVal,sub:redSub,ico:"fa-arrow-trend-down",c:"#46C42C",bg:"rgba(70,196,44,.1)"},
     {lbl:"Meta 3M: máx. "+metaQtd+" clientes",val:metaQtd,sub:"1% de "+cfg.total+" equipamentos ativos",ico:"fa-bullseye",c:"#070751",bg:"rgba(7,7,81,.08)"},
     {lbl:"% Real Atual",val:pctReal.toFixed(2)+"%",sub:pctReal<=cfg.meta?"✅ Dentro da meta":"⚠ Acima da meta de "+cfg.meta+"%",ico:"fa-chart-line",c:pctReal<=cfg.meta?"#46C42C":"#D30500",bg:pctReal<=cfg.meta?"rgba(70,196,44,.1)":"rgba(211,5,0,.08)"},
   ];
@@ -1142,15 +1318,26 @@ function renderCards(){
 function renderIndicador(){
   var d=filtered;
   var cfg=getCfg();
-  var m3=d.filter(function(r){return r["Status Equipamento"]==="3 - Meses";}).length;
-  var m2=d.filter(function(r){return r["Status Equipamento"]==="2 - Meses";}).length;
+  // Equipamentos: usar dcData (cruzamento dCliente)
+  var supF2=document.getElementById("f-sup")?document.getElementById("f-sup").value:"";
+  var stF2=document.getElementById("f-st")?document.getElementById("f-st").value:"";
+  var dc2=(dcData&&dcData.length>0)?dcData.filter(function(r){
+    if(supF2&&r["Supervisor"]!==supF2)return false;
+    if(stF2&&r["Status Equipamento"]!==stF2)return false;
+    return true;
+  }):d;
+  var m3=dc2.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
+            .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
+  var m2=dc2.filter(function(r){return r["Status Equipamento"]==="2 - Meses";})
+            .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
   var totalSC=m2+m3;
   var metaQtd=Math.ceil(cfg.total*(cfg.meta/100));
   var pct=cfg.total?(totalSC/cfg.total*100):0;
-  var faltam=Math.max(0,totalSC-metaQtd);
+  var faltam=Math.max(0,m3-metaQtd);
   var dr=Math.max(0,cfg.du-cfg.dt);
   var metaDia=dr>0?Math.ceil(faltam/dr):faltam;
-  var reduzido=Math.max(0,cfg.ini3m-m3);
+  var stFilt=document.getElementById("f-st")?document.getElementById("f-st").value:"";
+  var reduzido=stFilt==="2 - Meses"?Math.max(0,cfg.ini2m-m2):Math.max(0,cfg.ini3m-m3);
 
   // Emoji de humor
   var emoji,desc,cor;
@@ -1184,7 +1371,7 @@ function renderIndicador(){
     "<div class='imc' style='border-color:var(--red)'><div class='imc-val' style='color:var(--red)'>"+faltam+"</div><div class='imc-lbl'>Precisam positivar</div><div class='imc-sub'>para atingir meta</div></div>"+
     "<div class='imc' style='border-color:var(--orange)'><div class='imc-val' style='color:var(--orange)'>"+metaDia+"</div><div class='imc-lbl'>Meta do dia</div><div class='imc-sub'>"+dr+" dias restantes</div></div>"+
     "<div class='imc' style='border-color:var(--blue)'><div class='imc-val' style='color:var(--blue)'>"+cfg.dt+"/"+cfg.du+"</div><div class='imc-lbl'>Dias trabalhados</div><div class='imc-sub'>dias úteis do mês</div></div>"+
-    "<div class='imc' style='border-color:var(--green)'><div class='imc-val' style='color:var(--green)'>"+reduzido+"</div><div class='imc-lbl'>Já reduziu (3M)</div><div class='imc-sub'>"+cfg.ini3m+" → "+m3+"</div></div>";
+    "<div class='imc' style='border-color:var(--green)'><div class='imc-val' style='color:var(--green)'>"+Math.round(reduzido)+"</div><div class='imc-lbl'>Já reduziu (3M)</div><div class='imc-sub'>"+cfg.ini3m+" → "+Math.round(cfg.ini3m-reduzido)+"</div></div>";
 }
 
 /* ── CHART PLUGINS ── */
@@ -1231,17 +1418,53 @@ function dc(k){if(charts[k]){charts[k].destroy();delete charts[k];}}
 
 /* ── CHARTS ── */
 function buildChartData(){
-  var d=filtered;
-  var m2=d.filter(function(r){return r["Status Equipamento"]==="2 - Meses";}).length;
-  var m3=d.filter(function(r){return r["Status Equipamento"]==="3 - Meses";}).length;
-  var rMap={};d.forEach(function(r){var rp=r["Responsável Direto"]||"NÃO DEF.";rMap[rp]=(rMap[rp]||0)+1;});
+  var supF=document.getElementById("f-sup")?document.getElementById("f-sup").value:"";
+  var stF=document.getElementById("f-st")?document.getElementById("f-st").value:"";
+
+  // 2M vs 3M: usa dcData (dCliente, Total Equipamento > 0)
+  var dcFiltered=(dcData&&dcData.length>0)?dcData.filter(function(r){
+    if(supF&&r["Supervisor"]!==supF)return false;
+    if(stF&&r["Status Equipamento"]!==stF)return false;
+    return true;
+  }):filtered;
+  var m2=dcFiltered.filter(function(r){return r["Status Equipamento"]==="2 - Meses";})
+                   .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
+  var m3=dcFiltered.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
+                   .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
+
+  // Demais gráficos: usa tratData (aba 2 e 3 Meses_SC)
+  var d=(tratData&&tratData.length>0)?tratData.filter(function(r){
+    if(supF&&r["Supervisor"]!==supF)return false;
+    if(stF&&r["Status Equipamento"]!==stF)return false;
+    return true;
+  }):filtered;
+
+  // Por Responsável: campo Responsável Direto → contagem clientes
+  var rMap={};
+  d.forEach(function(r){
+    var rp=(r["Responsável Direto"]||"NÃO DEF.").toString().trim();
+    if(rp) rMap[rp]=(rMap[rp]||0)+1;
+  });
   var rK=Object.keys(rMap).sort(function(a,b){return rMap[b]-rMap[a];});
+
+  // Situação Tratativas: campo Status2
   var semT=d.filter(function(r){return norm(r["Tratativa"])==="sem tratativa";}).length;
-  var pend=d.filter(function(r){return norm(r["Status2"])==="pendente"&&norm(r["Tratativa"])!=="sem tratativa";}).length;
+  var pend=d.filter(function(r){
+    return norm(r["Status2"])==="pendente"&&norm(r["Tratativa"])!=="sem tratativa";
+  }).length;
   var conc=d.filter(function(r){return norm(r["Status2"])==="concluido";}).length;
+
+  // Freezers S/C por Regional: Status Equipamento → soma Total Equipamento
   var sMap={};
-  d.forEach(function(r){var s=r["Supervisor"]||"";if(!sMap[s])sMap[s]={"2 - Meses":0,"3 - Meses":0};sMap[s][r["Status Equipamento"]]=(sMap[s][r["Status Equipamento"]]||0)+1;});
-  var sups=Object.keys(sMap).sort(function(a,b){return(sMap[b]["2 - Meses"]+sMap[b]["3 - Meses"])-(sMap[a]["2 - Meses"]+sMap[a]["3 - Meses"]);});
+  d.forEach(function(r){
+    var s=r["Supervisor"]||"";
+    if(!sMap[s])sMap[s]={"2 - Meses":0,"3 - Meses":0};
+    var eq=parseFloat(r["Total Equipamento"])||0;
+    sMap[s][r["Status Equipamento"]]=(sMap[s][r["Status Equipamento"]]||0)+eq;
+  });
+  var sups=Object.keys(sMap).sort(function(a,b){
+    return(sMap[b]["2 - Meses"]+sMap[b]["3 - Meses"])-(sMap[a]["2 - Meses"]+sMap[a]["3 - Meses"]);
+  });
   return{m2,m3,rMap,rK,semT,pend,conc,sMap,sups};
 }
 
@@ -1319,18 +1542,73 @@ function renderDrill(){
   var d=filtered;
   var cfg=getCfg();
   var dr=Math.max(0,cfg.du-cfg.dt);
-  var totalSC=d.filter(function(r){return r["Status Equipamento"]==="3 - Meses";}).length;
+
+  // ── Se analData disponível, usar Analitico ──
+  if(analData&&analData.length>0){
+    var totalSC=analData.reduce(function(s,r){return s+r.sc;},0);
+    var rows="";
+    var totSC=0,totFreez=0;
+    var sorted=analData.slice().sort(function(a,b){return b.sc-a.sc;});
+    sorted.forEach(function(r){
+      var meta=Math.ceil(r.total*cfg.meta/100);
+      var dev=Math.max(0,r.sc-meta);
+      var dia=dr>0?Math.ceil(dev/dr):dev;
+      var pctEq=r.total?(r.sc/r.total*100):0;
+      var pctProb=totalSC?(r.sc/totalSC*100):0;
+      var pColor=pctEq>15?"var(--red)":pctEq>8?"var(--orange)":"var(--green)";
+      totSC+=r.sc; totFreez+=r.total;
+      rows+="<tr>"+
+        "<td><div class='drill-name'>"+r.sup+"</div></td>"+
+        "<td style='color:var(--red);font-weight:800'>"+Math.round(r.sc)+"</td>"+
+        "<td>"+Math.round(r.total)+"</td>"+
+        "<td style='color:var(--green);font-weight:700'>"+meta+"</td>"+
+        "<td style='color:var(--orange);font-weight:700'>"+dev+"</td>"+
+        "<td>"+dia+"</td>"+
+        "<td style='color:"+pColor+";font-weight:700'>"+pctEq.toFixed(1)+"%</td>"+
+        "<td style='font-weight:700'>"+pctProb.toFixed(1)+"%</td>"+
+        "</tr>";
+    });
+    // Footer
+    var totMeta=Math.ceil(totFreez*cfg.meta/100);
+    var totDev=Math.max(0,totSC-totMeta);
+    var tb=document.getElementById("drill-tbl");
+    if(tb){var tbody=tb.querySelector("tbody");if(tbody)tbody.innerHTML=rows;}
+    // Set footer with real totals from Analitico
+    var footEl=document.getElementById("drill-foot");
+    if(footEl){
+      var totMetaCalc=Math.ceil(totFreez*cfg.meta/100);
+      var totDevCalc=Math.max(0,totSC-totMetaCalc);
+      var totDiaCalc=dr>0?Math.ceil(totDevCalc/dr):totDevCalc;
+      footEl.innerHTML=
+        "<td style='text-align:left'>TOTAL</td>"+
+        "<td style='text-align:right;color:var(--red);font-weight:800'>"+Math.round(totSC)+"</td>"+
+        "<td style='text-align:right'>"+Math.round(totFreez)+"</td>"+
+        "<td style='text-align:right;color:var(--green);font-weight:700'>"+totMetaCalc+"</td>"+
+        "<td style='text-align:right;color:var(--orange);font-weight:700'>"+totDevCalc+"</td>"+
+        "<td style='text-align:right'>"+totDiaCalc+"</td>"+
+        "<td style='text-align:right'>"+(totFreez?(totSC/totFreez*100).toFixed(1)+"%":"—")+"</td>"+
+        "<td style='text-align:right'>100%</td>";
+    }
+    return;
+  }
+
+  // ── Fallback: usar filtered (cruzamento dCliente + tratativas) ──
+  var totalSC=d.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
+                  .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
 
   var tree={};
   d.forEach(function(r){
     var s=r["Supervisor"]||"",v=r["Vendedor"]||"";
     var is3m=r["Status Equipamento"]==="3 - Meses";
-    var equip=parseInt(r["Total Equipamento"])||0;
-    if(!tree[s])tree[s]={m3:0,equip:0,vends:{}};
-    if(is3m){tree[s].m3++;tree[s].equip+=equip;}
-    if(!tree[s].vends[v])tree[s].vends[v]={m3:0,equip:0,clientes:[]};
-    if(is3m){
-      tree[s].vends[v].m3++;
+    var is2m=r["Status Equipamento"]==="2 - Meses";
+    var equip=parseFloat(r["Total Equipamento"])||0;
+    if(!tree[s])tree[s]={m3:0,m2:0,equip:0,vends:{}};
+    if(is3m){tree[s].m3+=equip;tree[s].equip+=equip;}
+    if(is2m){tree[s].m2+=equip;tree[s].equip+=equip;}
+    if(!tree[s].vends[v])tree[s].vends[v]={m3:0,m2:0,equip:0,clientes:[]};
+    if(is3m||is2m){
+      if(is3m) tree[s].vends[v].m3+=equip;
+      if(is2m) tree[s].vends[v].m2+=equip;
       tree[s].vends[v].equip+=equip;
       tree[s].vends[v].clientes.push({
         cod:r["Cod_Cliente"]||"",
@@ -1340,13 +1618,12 @@ function renderDrill(){
       });
     }
   });
-
-  var sups=Object.keys(tree).sort(function(a,b){return tree[b].m3-tree[a].m3;});
+  var sups=Object.keys(tree).sort(function(a,b){return tree[b].equip-tree[a].equip;});
   var rows="";
   var totSC=0,totDev=0,totMeta=0,totEquip=0;
 
   sups.forEach(function(s){
-    var sc=tree[s].m3;
+    var sc=tree[s].equip; // equipamentos S/C (2M+3M)
     var eq=tree[s].equip;
     var foto=FOTO[s]||{total:0};
     var meta=Math.ceil(foto.total*cfg.meta/100);
@@ -1369,9 +1646,9 @@ function renderDrill(){
       "</tr>";
 
     if(isOpen){
-      var vends=Object.keys(tree[s].vends).sort(function(a,b){return tree[s].vends[b].m3-tree[s].vends[a].m3;});
+      var vends=Object.keys(tree[s].vends).sort(function(a,b){return tree[s].vends[b].equip-tree[s].vends[a].equip;});
       vends.forEach(function(v){
-        var vm3=tree[s].vends[v].m3;
+        var vm3=tree[s].vends[v].equip; // equipamentos S/C
         var veq=tree[s].vends[v].equip;
         var isOpenV=!!drillOpen["vend_"+s+"_"+v];
         rows+="<tr class='drill-child' data-drill='vend_"+s+"_"+v+"' style='cursor:pointer'>"+
