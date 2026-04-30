@@ -43,13 +43,15 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
 
 /* ── BANNERS ── */
 .banner{padding:7px 20px;display:flex;align-items:center;gap:10px;
-  font-size:.7rem;font-weight:600;border-bottom:2px solid transparent}
+  font-size:.7rem;font-weight:600;border-bottom:2px solid transparent;
+  position:sticky;top:60px;z-index:350}
 .bv{background:#EFF6FF;border-color:#93C5FD;color:#1E40AF}
 .ba{background:#F0FFF4;border-color:var(--green);color:#166534}
 
 /* ── IMPORT BAR ── */
 .imp-bar{background:#fff;border-bottom:1px solid var(--border);
-  padding:9px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  padding:9px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  position:sticky;top:60px;z-index:350}
 .imp-ico{color:var(--green);font-size:1rem;flex-shrink:0}
 .imp-info{flex:1}
 .imp-info b{display:block;font-size:.74rem;font-weight:700}
@@ -64,7 +66,8 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
 
 /* ── CFG BAR ── */
 .cfg-bar{background:rgba(255,255,255,0.93);border-bottom:1px solid rgba(255,255,255,0.2);
-  padding:7px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  padding:7px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  position:sticky;top:60px;z-index:350}
 .cfg-field{display:flex;align-items:center;gap:6px;font-size:.68rem;font-weight:600;color:var(--muted)}
 .cfg-inp{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:3px 7px;
   font-family:"Montserrat",sans-serif;font-size:.74rem;font-weight:700;width:72px;
@@ -76,7 +79,8 @@ body{font-family:"Montserrat",sans-serif;background:var(--bg);color:var(--text);
 
 /* ── FILTERS BAR ── */
 .filter-bar{background:#fff;border-bottom:2px solid var(--border);
-  padding:8px 20px;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+  padding:8px 20px;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;
+  position:sticky;top:60px;z-index:300}
 .fg{display:flex;flex-direction:column;gap:3px}
 .fg label{font-size:.58rem;font-weight:700;color:var(--muted);
   text-transform:uppercase;letter-spacing:.5px}
