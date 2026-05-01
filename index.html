@@ -622,7 +622,6 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
       <option value="SEM">Sem tratativa</option>
       <option value="PEND">Pendente</option>
       <option value="CONC">Concluído</option>
-      <option value="VENC">Prazo vencido</option>
       <option value="CAM_AB">Chamado aberto</option>
     </select></div>
   <div class="fg ac-wrap">
@@ -938,7 +937,7 @@ document.getElementById("file-in").addEventListener("change",function(e){
     try{
       var wb=XLSX.read(ev.target.result,{type:"binary",cellDates:true,dateNF:"dd/mm/yyyy"});
 
-      // ── 1. Fotografia → total equip ativos + 3M início mês ──
+      // ── 1. Fotografia → total equip ativos + 3M e 2M início mês ──
       var snFoto=wb.SheetNames.find(function(n){return n.toLowerCase().indexOf("fotografia")>=0;});
       if(snFoto){
         var rowsFoto=XLSX.utils.sheet_to_json(wb.Sheets[snFoto],{raw:true});
@@ -947,18 +946,17 @@ document.getElementById("file-in").addEventListener("change",function(e){
         });
         if(totalRow){
           var ta=parseInt(totalRow["Total Geral"]||totalRow["total geral"])||0;
-          var ti=parseInt(totalRow["3 - Meses"]||totalRow["3 - meses"])||0;
-          var ti2m=parseInt(totalRow["2 - Meses"]||totalRow["2 - meses"])||0;
+          var ti3=parseInt(totalRow["3 - Meses"]||totalRow["3 - meses"])||0;
+          var ti2=parseInt(totalRow["2 - Meses"]||totalRow["2 - meses"])||0;
           if(ta>0) document.getElementById("cfg-total").value=ta;
-          if(ti>0) document.getElementById("cfg-ini3m").value=ti;
-          if(ti2m>0) document.getElementById("cfg-ini2m").value=ti2m;
+          if(ti3>0) document.getElementById("cfg-ini3m").value=ti3;
+          if(ti2>0) document.getElementById("cfg-ini2m").value=ti2;
         }
       }
 
       // ── 2. Resumo Dia → col 0=Supervisor, 1=Manhã, 2=Tarde ──
       var snRD=wb.SheetNames.find(function(n){
-        var nl=n.toLowerCase();
-        return nl.indexOf("resumo")>=0&&nl.indexOf("dia")>=0;
+        var nl=n.toLowerCase(); return nl.indexOf("resumo")>=0&&nl.indexOf("dia")>=0;
       });
       if(snRD){
         var rdRaw=XLSX.utils.sheet_to_json(wb.Sheets[snRD],{header:1,raw:true});
@@ -966,127 +964,80 @@ document.getElementById("file-in").addEventListener("change",function(e){
         var dataRef="";
         if(rdRaw[0]&&rdRaw[0][1]){
           var dv=rdRaw[0][1];
-          if(dv instanceof Date){
-            dataRef=dv.toLocaleDateString("pt-BR");
-          } else if(typeof dv==="number"){
+          if(dv instanceof Date) dataRef=dv.toLocaleDateString("pt-BR");
+          else if(typeof dv==="number"){
             var dd=new Date(Math.round((dv-25569)*86400*1000));
             dataRef=dd.toLocaleDateString("pt-BR");
-          } else { dataRef=dv.toString(); }
+          } else dataRef=dv.toString();
         }
         for(var ri=2;ri<rdRaw.length;ri++){
           var row=rdRaw[ri];
           var sup=(row[0]||"").toString().trim();
           if(!sup||sup.toLowerCase().indexOf("total")>=0) continue;
-          var m=parseFloat(row[1])||0;
-          var t=parseFloat(row[2])||0;
-          if(sup) newRD[sup]={m:m,t:t};
+          newRD[sup]={m:parseFloat(row[1])||0,t:parseFloat(row[2])||0};
         }
         if(Object.keys(newRD).length>0){
           RD=newRD;
-          // Atualizar data no subtítulo
-          var rdSubs=document.querySelectorAll(".pnl-sub");
-          rdSubs.forEach(function(el){
+          document.querySelectorAll(".pnl-sub").forEach(function(el){
             if(el.textContent.indexOf("manhã vs tarde")>=0&&dataRef)
               el.textContent="Comparativo manhã vs tarde · "+dataRef;
           });
         }
       }
 
-      // ── 3. 2 e 3 Meses_SC → mapa de tratativas ──
+      // ── 3. 2 e 3 Meses_SC → única fonte de dados (sem dCliente) ──
       var snTrat="2 e 3 Meses_SC";
       if(!wb.SheetNames.includes(snTrat)){showToast("⚠ Aba '2 e 3 Meses_SC' não encontrada.");return;}
       var rowsTrat=XLSX.utils.sheet_to_json(wb.Sheets[snTrat],{header:1,raw:false,dateNF:"dd/mm/yyyy"});
-      var tratativas=parseRows(rowsTrat);
-      var tratMap={};
-      tratativas.forEach(function(r){
-        var cod=(r["Cod_Cliente"]||"").toString().trim().toUpperCase();
-        if(cod) tratMap[cod]=r;
-      });
-
-      // ── 4. dCliente → base atual (Total Equip > 0, 2M ou 3M) ──
-      var snDcl="dCliente";
-      var parsed=[];
-      if(wb.SheetNames.includes(snDcl)){
-        var rowsDcl=XLSX.utils.sheet_to_json(wb.Sheets[snDcl],{raw:false,dateNF:"dd/mm/yyyy"});
-        rowsDcl.forEach(function(dc){
-          var cod=(dc["cod_cliente"]||"").toString().trim().toUpperCase();
-          var equip=parseFloat(dc["Total Equipamento"])||0;
-          var meses=parseInt(dc["Meses S/ Compra"])||0;
-          // Só inclui quem tem freezer E está em 2M ou 3M
-          if(!cod||equip<=0||(meses!==2&&meses!==3)) return;
-          var statusEquip=meses===3?"3 - Meses":"2 - Meses";
-          var trat=tratMap[cod]||{};
-          function fmtDate(v){
-            if(!v||v==="NaN"||v===null) return null;
-            return v.toString().trim()||null;
-          }
-          parsed.push({
-            "Supervisor":        (dc["supervisor"]||trat["Supervisor"]||"").toString(),
-            "Vendedor":          (dc["vendedor"]||trat["Vendedor"]||"").toString(),
-            "Cod_Cliente":       cod,
-            "Nome_Fantasia":     (dc["nome_fantasia"]||trat["Nome_Fantasia"]||"").toString(),
-            "Data_Cadastro":     fmtDate(dc["data_cadastro"])||trat["Data_Cadastro"]||null,
-            "Data_Ultima_Compra":trat["Data_Ultima_Compra"]||null,
-            "Status Equipamento":statusEquip,
-            "Horizontal":        parseFloat(dc["Horizontal"]||trat["Horizontal"])||0,
-            "Vertical":          parseFloat(dc["Vertical"]||trat["Vertical"])||0,
-            "Total Equipamento": equip,
-            "Chamado":           trat["Chamado"]||null,
-            "Data_Abertura":     fmtDate(trat["Data_Abertura"])||null,
-            "Data_Encerramento": fmtDate(trat["Data_Encerramento"])||null,
-            "Status":            trat["Status"]||null,
-            "Tratativa":         trat["Tratativa"]||"SEM TRATATIVA",
-            "Prazo":             fmtDate(trat["Prazo"])||null,
-            "Responsável Direto":trat["Responsável Direto"]||null,
-            "Status2":           trat["Status2"]||"PENDENTE"
-          });
-        });
-      }
-
-      // Fallback: se dCliente não existir, usa só tratativas
-      if(!parsed.length) parsed=tratativas;
+      var parsed=parseRows(rowsTrat);
       if(!parsed.length){showToast("⚠ Nenhum dado encontrado.");return;}
 
-      // tratData = aba 2 e 3 Meses_SC (gráficos + tabela detalhada)
-      tratData=tratativas;
-      // allData = tratativas (tabela usa colunas exatas da aba 2 e 3 Meses_SC)
-      // parsed mantido para cálculos de equipamentos (cruzamento dCliente)
-      dcData=parsed; // cruzamento dCliente para cards/indicadores
-
-      // ── 5. Analitico → Análise Regional ──
-      var snAnal=wb.SheetNames.find(function(n){return n.toLowerCase().indexOf("analitico")>=0||n.toLowerCase().indexOf("analítico")>=0;});
+      // ── 4. Analitico → Análise Regional ──
+      var snAnal=wb.SheetNames.find(function(n){
+        return n.toLowerCase().indexOf("analitico")>=0||n.toLowerCase().indexOf("analítico")>=0;
+      });
       if(snAnal){
         var rowsAnal=XLSX.utils.sheet_to_json(wb.Sheets[snAnal],{header:1,raw:true});
         var newAnal=[];
-        // Row 0 = headers: Supervisor, Total Freezer, Total freezer S/C, %equipe, %problema
-        var headers=rowsAnal[0]||[];
         for(var ai=1;ai<rowsAnal.length;ai++){
           var ar=rowsAnal[ai];
           var sup=(ar[0]||"").toString().trim();
-          if(!sup||sup.toLowerCase().indexOf("total")>=0||sup.toLowerCase().indexOf("indicador")>=0||sup.toLowerCase().indexOf("meta")>=0) continue;
+          if(!sup) continue;
+          // Pular linhas de totais, indicadores, metas
+          var supLow=sup.toLowerCase();
+          if(supLow==="total"||supLow.indexOf("indicador")>=0||supLow.indexOf("meta")>=0) continue;
+          // Ignorar linhas onde col 0 é número (percentuais soltos)
+          if(typeof ar[0]==="number") continue;
           var totalFreez=parseFloat(ar[1])||0;
-          var totalSC=parseFloat(ar[2])||0;
-          var pctEquipe=parseFloat(ar[3])||0;
-          var pctProb=parseFloat(ar[4])||0;
-          if(sup&&(totalFreez>0||totalSC>0)) newAnal.push({
-            sup:sup, total:totalFreez, sc:totalSC,
-            pctEquipe:pctEquipe, pctProb:pctProb
-          });
+          var totalSCAnal=parseFloat(ar[2])||0;
+          if(sup&&(totalFreez>0||totalSCAnal>0))
+            newAnal.push({
+              sup:sup,
+              total:totalFreez,
+              sc:totalSCAnal,
+              pctEquipe:parseFloat(ar[3])||0,
+              pctProb:parseFloat(ar[4])||0
+            });
         }
         if(newAnal.length>0) analData=newAnal;
       }
 
-      // Table uses tratativas (exact columns from 2 e 3 Meses_SC)
-      allData=tratativas; filtered=[...allData]; drillOpen={};
+      // allData = tratativas (2 e 3 Meses_SC) — única fonte
+      allData=parsed; tratData=parsed; filtered=[...allData]; drillOpen={};
+      // dcData não usado (removido)
+      dcData=[];
+
       populateFilters();page=1;sortCol=null;sortDir=1;tblSearchCod="";tblSearchNome="";
       renderAll();document.getElementById("btn-exp").style.display="flex";
 
-      var m3=parsed.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
-                   .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
-      var m2=parsed.filter(function(r){return r["Status Equipamento"]==="2 - Meses";})
-                   .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
-      var ini3m=parseInt(document.getElementById("cfg-ini3m").value)||0;
-      showToast("✓ "+parsed.length+" clientes | 3M: "+Math.round(m3)+" equip | Já Reduziu: "+(ini3m-Math.round(m3)));
+      // Toast com resumo
+      var m3a=parsed.filter(function(r){return r["Status Equipamento Atual"]==="3 - Meses";})
+                    .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
+      var m2a=parsed.filter(function(r){return r["Status Equipamento Atual"]==="2 - Meses";})
+                    .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
+      var ini3m=parseInt(document.getElementById("cfg-ini3m").value)||360;
+      var ini2m=parseInt(document.getElementById("cfg-ini2m").value)||207;
+      showToast("✓ "+parsed.length+" clientes | 3M atual: "+Math.round(m3a)+" (red: "+(ini3m-Math.round(m3a))+") | 2M atual: "+Math.round(m2a)+" (red: "+(ini2m-Math.round(m2a))+")");
     }catch(err){showToast("⚠ Erro: "+err.message);console.error(err);}
   };
   reader.readAsBinaryString(f);this.value="";
@@ -1094,11 +1045,12 @@ document.getElementById("file-in").addEventListener("change",function(e){
 function parseRows(rows){
   if(!rows||rows.length<2)return[];
   var h=rows[0];
-  // Colunas exatas da aba 2 e 3 Meses_SC
+  // Colunas exatas conforme especificação
   var COLS=["Supervisor","Vendedor","Cod_Cliente","Nome_Fantasia","Data_Cadastro",
     "Status Equipamento","Horizontal","Vertical","Total Equipamento",
     "Chamado","Data_Abertura","Data_Encerramento","Status",
-    "Tratativa","Prazo","Responsável Direto","Status2"];
+    "Tratativa","Prazo","Responsável Direto","Status2",
+    "Total Equipamento Atual","Status Equipamento Atual"];
   return rows.slice(1).filter(function(r){return r[0]||r[3];}).map(function(r){
     var o={};
     h.forEach(function(k,i){
@@ -1119,7 +1071,6 @@ function exportHTML(){
       atualizado_em: ts,
       total: allData.length,
       dados: allData,
-      dcDados: dcData,
       tratDados: tratData,
       analDados: analData,
       rdDados: RD,
@@ -1175,7 +1126,6 @@ function applyFilters(){
       if(sit==="SEM"&&tr!=="sem tratativa")return false;
       if(sit==="PEND"&&!(s2==="pendente"&&tr!=="sem tratativa"))return false;
       if(sit==="CONC"&&s2!=="concluido")return false;
-      if(sit==="VENC"&&!isVenc(r["Prazo"]))return false;
       if(sit==="CAM_AB"&&!isCamAb(r))return false;
     }
     if(cam){
@@ -1277,19 +1227,14 @@ function doSort(col,toggle){
 function renderCards(){
   var d=filtered;
   var cfg=getCfg();
-  // Equipamentos: usar dcData (cruzamento dCliente) para contar equip correto
-  // Aplicar filtro de supervisor/status ao dcData também
-  var supF=document.getElementById("f-sup")?document.getElementById("f-sup").value:"";
-  var stF=document.getElementById("f-st")?document.getElementById("f-st").value:"";
-  var dc=(dcData&&dcData.length>0)?dcData.filter(function(r){
-    if(supF&&r["Supervisor"]!==supF)return false;
-    if(stF&&r["Status Equipamento"]!==stF)return false;
-    return true;
-  }):d;
-  var m2=dc.filter(function(r){return r["Status Equipamento"]==="2 - Meses";})
-           .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
-  var m3=dc.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
-           .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
+  // m2/m3 ATUAL = soma Total Equipamento Atual onde Status Equipamento Atual = 2M ou 3M
+  // "Comprando" = voltou a comprar (redução real) — não conta
+  var m2=d.filter(function(r){
+    return r["Status Equipamento Atual"]==="2 - Meses";
+  }).reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
+  var m3=d.filter(function(r){
+    return r["Status Equipamento Atual"]==="3 - Meses";
+  }).reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
   var totalSC=m2+m3;
   var metaQtd=Math.ceil(cfg.total*(cfg.meta/100));
   // Já Reduziu = início (Fotografia) - atual (dCliente)
@@ -1328,18 +1273,13 @@ function renderCards(){
 function renderIndicador(){
   var d=filtered;
   var cfg=getCfg();
-  // Equipamentos: usar dcData (cruzamento dCliente)
-  var supF2=document.getElementById("f-sup")?document.getElementById("f-sup").value:"";
-  var stF2=document.getElementById("f-st")?document.getElementById("f-st").value:"";
-  var dc2=(dcData&&dcData.length>0)?dcData.filter(function(r){
-    if(supF2&&r["Supervisor"]!==supF2)return false;
-    if(stF2&&r["Status Equipamento"]!==stF2)return false;
-    return true;
-  }):d;
-  var m3=dc2.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
-            .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
-  var m2=dc2.filter(function(r){return r["Status Equipamento"]==="2 - Meses";})
-            .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
+  // m3/m2 ATUAL = soma Total Equipamento Atual onde Status Equipamento Atual = 3M ou 2M
+  var m3=d.filter(function(r){
+    return r["Status Equipamento Atual"]==="3 - Meses";
+  }).reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
+  var m2=d.filter(function(r){
+    return r["Status Equipamento Atual"]==="2 - Meses";
+  }).reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
   var totalSC=m2+m3;
   var metaQtd=Math.ceil(cfg.total*(cfg.meta/100));
   var pct=cfg.total?(totalSC/cfg.total*100):0;
@@ -1431,23 +1371,18 @@ function buildChartData(){
   var supF=document.getElementById("f-sup")?document.getElementById("f-sup").value:"";
   var stF=document.getElementById("f-st")?document.getElementById("f-st").value:"";
 
-  // 2M vs 3M: usa dcData (dCliente, Total Equipamento > 0)
-  var dcFiltered=(dcData&&dcData.length>0)?dcData.filter(function(r){
-    if(supF&&r["Supervisor"]!==supF)return false;
-    if(stF&&r["Status Equipamento"]!==stF)return false;
-    return true;
-  }):filtered;
-  var m2=dcFiltered.filter(function(r){return r["Status Equipamento"]==="2 - Meses";})
-                   .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
-  var m3=dcFiltered.filter(function(r){return r["Status Equipamento"]==="3 - Meses";})
-                   .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento"])||0);},0);
-
-  // Demais gráficos: usa tratData (aba 2 e 3 Meses_SC)
+  // Todos os gráficos: 2 e 3 Meses_SC (sem dCliente)
   var d=(tratData&&tratData.length>0)?tratData.filter(function(r){
     if(supF&&r["Supervisor"]!==supF)return false;
     if(stF&&r["Status Equipamento"]!==stF)return false;
     return true;
   }):filtered;
+
+  // 2M vs 3M: Status Equipamento Atual = 2M ou 3M → soma Total Equipamento Atual
+  var m2=d.filter(function(r){return r["Status Equipamento Atual"]==="2 - Meses";})
+          .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
+  var m3=d.filter(function(r){return r["Status Equipamento Atual"]==="3 - Meses";})
+          .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
 
   // Por Responsável: campo Responsável Direto → contagem clientes
   var rMap={};
@@ -1464,13 +1399,16 @@ function buildChartData(){
   }).length;
   var conc=d.filter(function(r){return norm(r["Status2"])==="concluido";}).length;
 
-  // Freezers S/C por Regional: Status Equipamento → soma Total Equipamento
+  // Freezers S/C por Regional: Status Equipamento ATUAL → soma Total Equipamento ATUAL
+  // Só conta quem ainda está em 2M ou 3M (não "Comprando")
   var sMap={};
   d.forEach(function(r){
+    var sea=r["Status Equipamento Atual"]||"";
+    if(sea!=="2 - Meses"&&sea!=="3 - Meses") return; // exclui "Comprando"
     var s=r["Supervisor"]||"";
     if(!sMap[s])sMap[s]={"2 - Meses":0,"3 - Meses":0};
-    var eq=parseFloat(r["Total Equipamento"])||0;
-    sMap[s][r["Status Equipamento"]]=(sMap[s][r["Status Equipamento"]]||0)+eq;
+    var eq=parseFloat(r["Total Equipamento Atual"])||0;
+    sMap[s][sea]=(sMap[s][sea]||0)+eq;
   });
   var sups=Object.keys(sMap).sort(function(a,b){
     return(sMap[b]["2 - Meses"]+sMap[b]["3 - Meses"])-(sMap[a]["2 - Meses"]+sMap[a]["3 - Meses"]);
@@ -1760,7 +1698,7 @@ function renderTable(){
       var st2Badge=st2==="concluido"?"<span class='badge b-conc'>Concluído</span>":
         trat==="sem tratativa"?"<span class='badge b-sem'>Sem tratativa</span>":
         "<span class='badge b-pend'>Pendente</span>";
-      var prazoBadge=venc?"<span class='badge b-venc'>VENCIDO</span>":(r["Prazo"]||"—");
+      var prazoBadge=r["Prazo"]||"";  // Apenas data, sem status automático
       var camStatus=r["Status"]||"";
       var camBadge=r["Chamado"]?(camAb?"<span class='badge b-cam-ab'>"+r["Chamado"]+"</span>":"<span class='badge b-cam-fe'>"+r["Chamado"]+"</span>"):"—";
       var tratTxt=(r["Tratativa"]||"—");
@@ -1848,7 +1786,6 @@ function initViewer(data, timestamp, extra){
   allData=data; filtered=[...allData];
   // Restaurar dcData, tratData, analData, RD e cfg do JSON
   if(extra){
-    if(extra.dcDados&&extra.dcDados.length>0) dcData=extra.dcDados;
     if(extra.tratDados&&extra.tratDados.length>0) tratData=extra.tratDados;
     if(extra.analDados&&extra.analDados.length>0) analData=extra.analDados;
     if(extra.rdDados&&Object.keys(extra.rdDados).length>0) RD=extra.rdDados;
