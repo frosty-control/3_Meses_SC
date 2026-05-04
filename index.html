@@ -586,18 +586,18 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
 <!-- CFG -->
 <div class="cfg-bar">
   <div class="cfg-field"><label>⚙ Total equip. ativos</label>
-    <input class="cfg-inp" id="cfg-total" type="number" value="3889"></div>
+    <input class="cfg-inp" id="cfg-total" type="number" value="3889" onchange="if(isAdmin){saveCfg();}"></div>
   <div class="cfg-field"><label>🎯 Meta %</label>
-    <input class="cfg-inp" id="cfg-meta" type="number" value="1" step="0.1"></div>
+    <input class="cfg-inp" id="cfg-meta" type="number" value="1" step="0.1" onchange="if(isAdmin){saveCfg();}"></div>
   <div class="cfg-field"><label>📅 3M início mês</label>
-    <input class="cfg-inp" id="cfg-ini3m" type="number" value="360"></div>
+    <input class="cfg-inp" id="cfg-ini3m" type="number" value="360" onchange="if(isAdmin){saveCfg();}"></div>
   <div class="cfg-field"><label>📅 2M início mês</label>
-    <input class="cfg-inp" id="cfg-ini2m" type="number" value="207"></div>
+    <input class="cfg-inp" id="cfg-ini2m" type="number" value="207" onchange="if(isAdmin){saveCfg();}"></div>
   <div class="cfg-field"><label>✅ Dias úteis</label>
-    <input class="cfg-inp" id="cfg-du" type="number" value="20"></div>
+    <input class="cfg-inp" id="cfg-du" type="number" value="20" onchange="if(isAdmin){saveCfg();}"></div>
   <div class="cfg-field"><label>📌 Dias trabalhados</label>
-    <input class="cfg-inp" id="cfg-dt" type="number" value="12"></div>
-  <button class="btn-calc" id="btn-recalc" onclick="renderAll()">↻ Recalcular</button>
+    <input class="cfg-inp" id="cfg-dt" type="number" value="12" onchange="if(isAdmin){saveCfg();}"></div>
+  <button class="btn-calc" id="btn-recalc" onclick="saveCfg();renderAll()">↻ Recalcular</button>
 </div>
 
 <!-- FILTERS -->
@@ -709,6 +709,7 @@ tbody td:first-child{font-weight:700;color:var(--blue)}
         </div>
         <div class="ch-wrap"><canvas id="c-trat"></canvas></div>
       </div>
+
     </div>
   </div>
 
@@ -951,6 +952,7 @@ document.getElementById("file-in").addEventListener("change",function(e){
           if(ta>0) document.getElementById("cfg-total").value=ta;
           if(ti3>0) document.getElementById("cfg-ini3m").value=ti3;
           if(ti2>0) document.getElementById("cfg-ini2m").value=ti2;
+          saveCfg(); // persist imported values
         }
       }
 
@@ -1099,6 +1101,9 @@ function fd(v){var d=pd(v);return d?d.toLocaleDateString("pt-BR"):(v?String(v):"
 function isVenc(v){var d=pd(v);return d&&d<hoje;}
 function isCamAb(r){return r["Chamado"]&&!r["Data_Encerramento"];}
 var norm=function(s){return(s||"").toLowerCase().replace(/\s+/g," ").trim();};
+function saveCfg(){try{var c=getCfgRaw();localStorage.setItem("frosty_cfg",JSON.stringify(c));}catch(e){}}
+function loadCfg(){try{var s=localStorage.getItem("frosty_cfg");if(!s)return;var c=JSON.parse(s);if(c.total)document.getElementById("cfg-total").value=c.total;if(c.meta)document.getElementById("cfg-meta").value=c.meta;if(c.ini3m)document.getElementById("cfg-ini3m").value=c.ini3m;if(c.ini2m)document.getElementById("cfg-ini2m").value=c.ini2m;if(c.du)document.getElementById("cfg-du").value=c.du;if(c.dt)document.getElementById("cfg-dt").value=c.dt;}catch(e){}}
+function getCfgRaw(){return{total:parseInt(document.getElementById("cfg-total").value)||3889,meta:parseFloat(document.getElementById("cfg-meta").value)||1,ini3m:parseInt(document.getElementById("cfg-ini3m").value)||360,ini2m:parseInt(document.getElementById("cfg-ini2m").value)||207,du:parseInt(document.getElementById("cfg-du").value)||20,dt:parseInt(document.getElementById("cfg-dt").value)||12};}
 function getCfg(){return{total:parseInt(document.getElementById("cfg-total").value)||3889,meta:parseFloat(document.getElementById("cfg-meta").value)||1,ini3m:parseInt(document.getElementById("cfg-ini3m").value)||360,ini2m:parseInt(document.getElementById("cfg-ini2m").value)||207,du:parseInt(document.getElementById("cfg-du").value)||20,dt:parseInt(document.getElementById("cfg-dt").value)||12};}
 
 /* ── FILTERS ── */
@@ -1384,20 +1389,32 @@ function buildChartData(){
   var m3=d.filter(function(r){return r["Status Equipamento Atual"]==="3 - Meses";})
           .reduce(function(s,r){return s+(parseFloat(r["Total Equipamento Atual"])||0);},0);
 
-  // Por Responsável: campo Responsável Direto → contagem clientes
+  // Por Responsável: soma Total Equipamento Atual onde Status Equip Atual = 3M ou 2M
   var rMap={};
   d.forEach(function(r){
+    var sea=r["Status Equipamento Atual"]||"";
+    if(sea!=="3 - Meses"&&sea!=="2 - Meses") return; // exclui Comprando
     var rp=(r["Responsável Direto"]||"NÃO DEF.").toString().trim();
-    if(rp) rMap[rp]=(rMap[rp]||0)+1;
+    var eq=parseFloat(r["Total Equipamento Atual"])||0;
+    rMap[rp]=(rMap[rp]||0)+eq;
   });
   var rK=Object.keys(rMap).sort(function(a,b){return rMap[b]-rMap[a];});
 
-  // Situação Tratativas: campo Status2
-  var semT=d.filter(function(r){return norm(r["Tratativa"])==="sem tratativa";}).length;
-  var pend=d.filter(function(r){
-    return norm(r["Status2"])==="pendente"&&norm(r["Tratativa"])!=="sem tratativa";
+  // Situação Tratativas: baseado em Status Equipamento Atual
+  // Pendente = ainda 2M ou 3M sem tratativa
+  // Com tratativa = ainda 2M ou 3M com tratativa
+  // Concluído = voltou a comprar (Comprando)
+  var semT=d.filter(function(r){
+    var sea=r["Status Equipamento Atual"]||"";
+    return (sea==="3 - Meses"||sea==="2 - Meses")&&norm(r["Tratativa"]||"")==="sem tratativa";
   }).length;
-  var conc=d.filter(function(r){return norm(r["Status2"])==="concluido";}).length;
+  var pend=d.filter(function(r){
+    var sea=r["Status Equipamento Atual"]||"";
+    return (sea==="3 - Meses"||sea==="2 - Meses")&&norm(r["Tratativa"]||"")!=="sem tratativa";
+  }).length;
+  var conc=d.filter(function(r){return (r["Status Equipamento Atual"]||"")==="Comprando";}).length;
+
+
 
   // Freezers S/C por Regional: Status Equipamento ATUAL → soma Total Equipamento ATUAL
   // Só conta quem ainda está em 2M ou 3M (não "Comprando")
@@ -1431,6 +1448,7 @@ function renderCharts(){
   charts.trat=new Chart(document.getElementById("c-trat"),{type:"doughnut",
     data:{labels:["Sem tratativa","Pendente","Concluído"],datasets:[{data:[cd.semT,cd.pend,cd.conc],backgroundColor:["#5A6A9A","#FF6B00","#46C42C"],borderColor:"#fff",borderWidth:3,hoverOffset:8}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:"54%",plugins:{legend:legOpt,tooltip:TIP}}});
+
   dc("regional");
   charts.regional=new Chart(document.getElementById("c-regional"),{type:"bar",
     data:{labels:cd.sups,datasets:[
@@ -1790,9 +1808,15 @@ function initViewer(data, timestamp, extra){
     if(extra.analDados&&extra.analDados.length>0) analData=extra.analDados;
     if(extra.rdDados&&Object.keys(extra.rdDados).length>0) RD=extra.rdDados;
     if(extra.cfg){
-      if(extra.cfg.total) document.getElementById("cfg-total").value=extra.cfg.total;
-      if(extra.cfg.ini3m) document.getElementById("cfg-ini3m").value=extra.cfg.ini3m;
-      if(extra.cfg.ini2m) document.getElementById("cfg-ini2m").value=extra.cfg.ini2m;
+      // Só restaura do JSON se não houver valor salvo no localStorage
+      var hasSaved=!!localStorage.getItem("frosty_cfg");
+      if(!hasSaved){
+        if(extra.cfg.total) document.getElementById("cfg-total").value=extra.cfg.total;
+        if(extra.cfg.ini3m) document.getElementById("cfg-ini3m").value=extra.cfg.ini3m;
+        if(extra.cfg.ini2m) document.getElementById("cfg-ini2m").value=extra.cfg.ini2m;
+        if(extra.cfg.du) document.getElementById("cfg-du").value=extra.cfg.du;
+        if(extra.cfg.dt) document.getElementById("cfg-dt").value=extra.cfg.dt;
+      }
     }
   }
   isViewer=true;
@@ -1807,7 +1831,7 @@ function initViewer(data, timestamp, extra){
 }
 
 if(typeof window.__SC_VIEWER__!=="undefined"){
-  try{ initViewer(window.__SC_VIEWER__); }catch(e){console.error(e);}
+  try{ var _scv=window.__SC_VIEWER__; initViewer(_scv.dados||_scv, _scv.atualizado_em, _scv); loadCfg(); }catch(e){console.error(e);}
 }else if(PRELOAD&&PRELOAD.length){
   initViewer(PRELOAD);
 }else{
@@ -1817,7 +1841,7 @@ if(typeof window.__SC_VIEWER__!=="undefined"){
     .then(function(json){
       var data = json.dados || json; // suporta formato novo e antigo
       var timestamp = json.atualizado_em || null;
-      initViewer(data, timestamp, json);
+      initViewer(data, timestamp, json); loadCfg();
     })
     .catch(function(e){
       console.error(e);
